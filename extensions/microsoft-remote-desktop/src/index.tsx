@@ -80,8 +80,7 @@ function returnUri(bookmark: RDPBookmark): string {
 
 function openBookmark(bookmark: RDPBookmark) {
   const uri = returnUri(bookmark);
-  const result = execSync(`open ${uri}`);
-  console.log(result.toString());
+  execSync(`zsh -l -c "open '${uri.trim().replace("rdp://", "rdp:///")}'"`);
 }
 
 type RDPBookmark = {
