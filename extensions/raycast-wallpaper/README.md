@@ -2,27 +2,16 @@
 
 Set Raycast official wallpapers as desktop wallpaper.
 
-**Commands**
+**Tips:**
 
-- **Set Raycast Wallpaper**: Get and set Raycast wallpapers to desktop.
+- If you don't like the automatic wallpaper switching feature, turn it off by turning off the Background Refresh function in the command's preferences
 
-  - Set Desktop Wallpaper: Set the current picture as desktop wallpaper
+Want more **Media** extensions? Try those. [©koinzhang](https://www.raycast.com/koinzhang)
 
-  - Download Picture: Download Pictures, you can set the save directory in the preferences
-
-  - Set Random Wallpaper: Set random picture as desktop wallpaper
-
-  - Go to Raycast Wallpaper: Go to Raycast wallpaper website
-
-  - Clear Pictures Cache: Clear the image cache. Note: When you enter the command, the image will be re-cached
-
-- **Random Raycast Wallpaper**: Set random Raycast wallpapers to desktop.
-
-**Preferences**
-
-- _Apply Wallpaper To_
-  - Current Desktop
-  - Every Desktop
-
-I would like to thank [EGGSY](https://www.raycast.com/eggsy).
-Part of the code borrowed from his extension [Unsplash](https://www.raycast.com/eggsy/unsplash).
+<a title="Install Bing Wallpaper Raycast Extension" href="https://www.raycast.com/koinzhang/bing-wallpaper#install">
+<img height="64" style="height: 64px" src="https://assets.raycast.com/koinzhang/bing-wallpaper/install_button@2x.png" alt="">
+</a><a title="Install Placeholder Raycast Extension" href="https://www.raycast.com/koinzhang/placeholder#install">
+<img height="64" style="height: 64px" src="https://assets.raycast.com/koinzhang/placeholder/install_button@2x.png" alt="">
+</a><a title="Install Pexels Raycast Extension" href="https://www.raycast.com/koinzhang/pexels#install">
+<img height="64" style="height: 64px" src="https://assets.raycast.com/koinzhang/pexels/install_button@2x.png" alt="">
+</a>

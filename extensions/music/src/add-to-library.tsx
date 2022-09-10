@@ -1,7 +1,9 @@
-import { closeMainWindow } from "@raycast/api";
-import * as playerControls from "./util/controls";
+import { pipe } from "fp-ts/lib/function";
+
+import { hud } from "./util/feedback";
+import * as music from "./util/scripts";
+import { handleTaskEitherError } from "./util/utils";
 
 export default async () => {
-  await closeMainWindow();
-  await playerControls.addToLibrary();
+  await pipe(music.currentTrack.addToLibrary, hud(`✅ Added to library`), handleTaskEitherError)();
 };

@@ -1,19 +1,9 @@
-import { getPreferenceValues, getSelectedFinderItems, LocalStorage } from "@raycast/api";
+import { getSelectedFinderItems, LocalStorage } from "@raycast/api";
 import fse from "fs-extra";
-import { DirectoryInfo, DirectoryType } from "./directory-info";
+import { DirectoryInfo, FileType } from "../types/types";
 import { imgExt } from "./constants";
 import { parse } from "path";
-import Values = LocalStorage.Values;
 import { getFinderInsertLocation } from "./applescript-utils";
-
-export const commonPreferences = () => {
-  const preferencesMap = new Map(Object.entries(getPreferenceValues<Values>()));
-  return {
-    autoCopyLatestFile: preferencesMap.get("autoCopyLatestFile") as boolean,
-    fileShowNumber: preferencesMap.get("fileShowNumber") as string,
-    sortBy: preferencesMap.get("sortBy") as string,
-  };
-};
 
 export const isEmpty = (string: string | null | undefined) => {
   return !(string != null && String(string).length > 0);
@@ -39,9 +29,8 @@ export const fetchDirectoryPath = async () => {
     const selectedDirectory = await fetchFileSystemItem();
     if (selectedDirectory.length > 0) {
       selectedDirectory.forEach((value) => {
-        const parsedPath = parse(value.path);
         if (isDirectory(value.path)) {
-          directoryPath.push(parsedPath.dir + "/" + parsedPath.base);
+          directoryPath.push(value.path);
         }
       });
     } else {
@@ -64,20 +53,24 @@ export const isDirectory = (path: string) => {
   }
 };
 
-export const isDirectoryOrFile = (path: string) => {
+export const isDirectoryOrFileForFile = (path: string) => {
   try {
     const stat = fse.lstatSync(path);
+    const parsedPath = parse(path);
     if (stat.isDirectory()) {
-      return DirectoryType.DIRECTORY;
+      return FileType.FOLDER;
     }
     if (stat.isFile()) {
-      return DirectoryType.FILE;
+      if (imgExt.includes(parsedPath.ext)) {
+        return FileType.IMAGE;
+      }
+      return FileType.FILE;
     }
   } catch (e) {
     console.error(String(e));
-    return DirectoryType.FILE;
+    return FileType.FILE;
   }
-  return DirectoryType.FILE;
+  return FileType.FILE;
 };
 
 export const checkDuplicatePath = (path: string, localDirectory: DirectoryInfo[]) => {
@@ -93,13 +86,13 @@ export const checkDuplicatePath = (path: string, localDirectory: DirectoryInfo[]
 };
 
 export const checkDirectoryValid = (localDirectory: DirectoryInfo[]) => {
-  localDirectory.forEach((value, index) => {
-    if (!fse.existsSync(value.path)) {
-      console.debug(value.name);
-      localDirectory.splice(index, 1);
+  const validDirectory: DirectoryInfo[] = [];
+  localDirectory.forEach((value) => {
+    if (fse.existsSync(value.path)) {
+      validDirectory.push(value);
     }
   });
-  return localDirectory;
+  return validDirectory;
 };
 
 export const isImage = (ext: string) => {
@@ -119,7 +112,7 @@ export const getDirectoryFiles = (directory: string) => {
         id: "files_" + (timeStamp + index),
         name: parsedPath.base,
         path: parsedPath.dir + "/" + parsedPath.base,
-        type: isDirectoryOrFile(value),
+        type: isDirectoryOrFileForFile(value),
         modifyTime: getModifyTime(value),
       };
     });
@@ -163,11 +156,20 @@ export const getFileShowNumber = (fileShowNumber: string) => {
       return 3;
     case "5":
       return 5;
-    case "8":
-      return 8;
     case "10":
       return 10;
     default:
       return -1;
   }
 };
+
+export function formatBytes(sizeInBytes: number) {
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  let unitIndex = 0;
+  while (sizeInBytes >= 1024) {
+    sizeInBytes /= 1024;
+    unitIndex++;
+  }
+
+  return `${sizeInBytes.toFixed(1)} ${units[unitIndex]}`;
+}

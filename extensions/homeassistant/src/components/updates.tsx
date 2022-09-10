@@ -26,7 +26,7 @@ export function UpdateShowChangelog(props: { state: State }): JSX.Element | null
     <Action.Push
       title="Show Changelog"
       shortcut={{ modifiers: ["cmd"], key: "l" }}
-      icon={{ source: Icon.TextDocument, tintColor: Color.PrimaryText }}
+      icon={{ source: Icon.BlankDocument, tintColor: Color.PrimaryText }}
       target={<ChangelogDetail state={s} />}
     />
   );
@@ -53,6 +53,9 @@ export function UpdateInstallAction(props: { state: State }): JSX.Element | null
     return null;
   }
   if (s.state !== "on") {
+    return null;
+  }
+  if (s.attributes.in_progress !== false) {
     return null;
   }
   const handle = async () => {

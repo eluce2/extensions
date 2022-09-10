@@ -8,7 +8,10 @@
   "contributors": [
     "Hodglim",
     "JonathanWbn",
-    "gebeto"
+    "gebeto",
+    "mommertf",
+    "duboiss",
+    "lbergantin"
   ],
   "categories": [
     "Developer Tools",
@@ -21,6 +24,13 @@
       "title": "EC2 Instances",
       "subtitle": "Amazon AWS",
       "description": "List and Filter All your EC2 Instances",
+      "mode": "view"
+    },
+    {
+      "name": "ecs",
+      "title": "ECS Clusters",
+      "subtitle": "Amazon AWS",
+      "description": "List and Filter All your ECS Clusters",
       "mode": "view"
     },
     {
@@ -50,6 +60,13 @@
       "subtitle": "Amazon AWS",
       "description": "List All your CloudFormation Stacks",
       "mode": "view"
+    },
+    {
+      "name": "dynamodb",
+      "title": "DynamoDB Tables",
+      "subtitle": "Amazon AWS",
+      "description": "List All your DynamoDB Tables",
+      "mode": "view"
     }
   ],
   "preferences": [
@@ -71,7 +88,7 @@
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.25.3",
+    "@raycast/api": "^1.38.2",
     "aws-sdk": "^2.1023.0",
     "node-fetch": "^3.0.0"
   },
@@ -87,6 +104,8 @@
   },
   "scripts": {
     "build": "ray build -e dist",
-    "dev": "ray develop"
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint"
   }
 }

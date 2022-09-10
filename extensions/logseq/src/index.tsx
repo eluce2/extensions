@@ -1,5 +1,6 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation, showHUD } from "@raycast/api";
 import {
+  addLeadingTimeToContentIfNecessary,
   appendContentToFile,
   getTodayJournalPath,
   noop,
@@ -16,8 +17,14 @@ export default function Command() {
 
   async function handleSubmit(values: CommandForm) {
     if (!values.content) {
-      return showToast({ style: Toast.Style.Failure, title: "🐝 Type something to get started" });
+      return showToast({
+        style: Toast.Style.Failure,
+        title: "🐝 Type something to get started",
+      });
     }
+
+    const content = addLeadingTimeToContentIfNecessary(values.content);
+
     validateUserConfigGraphPath()
       .catch((e) => {
         showGraphPathInvalidToast();
@@ -25,7 +32,7 @@ export default function Command() {
       })
       .then(() => showToast({ style: Toast.Style.Animated, title: "Adding notes" }))
       .then(getTodayJournalPath)
-      .then((filePath) => appendContentToFile(values.content, filePath))
+      .then((filePath) => appendContentToFile(content, filePath))
       .then(() => showHUD("✅ Note added"))
       .then(pop)
       .catch((e) => showToast({ style: Toast.Style.Failure, title: "Failed", message: e }))

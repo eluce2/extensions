@@ -9,6 +9,14 @@ export interface ErrorLike {
 
 // Copied from https://sourcegraph.com/github.com/sourcegraph/sourcegraph/-/blob/client/shared/src/search/stream.ts?L12&subtree=true
 
+// The latest supported version of our search syntax. Users should never be able to determine the search version.
+// The version is set based on the release tag of the instance. Anything before 3.9.0 will not pass a version parameter,
+// and will therefore default to V1.
+export const LATEST_VERSION = "V2";
+
+/** All values that are valid for the `type:` filter. `null` represents default code search. */
+export type SearchType = "file" | "repo" | "path" | "symbol" | "diff" | "commit" | null;
+
 export type SearchEvent =
   | { type: "matches"; data: SearchMatch[] }
   | { type: "progress"; data: Progress }
@@ -108,6 +116,7 @@ export interface CommitMatch {
   repoLastFetched?: string;
 
   content: MarkdownText;
+  // Array of [line, character, length] triplets
   ranges: number[][];
 }
 
@@ -203,12 +212,15 @@ export interface Filter {
   label: string;
   count: number;
   limitHit: boolean;
-  kind: string;
+  kind: "file" | "repo" | "lang" | "utility";
 }
+
+export type AlertKind = "lucky-search-queries";
 
 interface Alert {
   title: string;
   description?: string | null;
+  kind?: AlertKind | null;
   proposedQueries: ProposedQuery[] | null;
 }
 
@@ -218,6 +230,8 @@ interface ProposedQuery {
 }
 
 export type StreamingResultsState = "loading" | "error" | "complete";
+
+// Copied from the end of https://sourcegraph.com/github.com/sourcegraph/sourcegraph/-/blob/client/shared/src/search/stream.ts?L12&subtree=true
 
 export function getRepositoryUrl(repository: string, branches?: string[]): string {
   const branch = branches?.[0];

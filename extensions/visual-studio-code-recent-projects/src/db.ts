@@ -9,14 +9,11 @@ const preferences: Preferences = getPreferenceValues();
 export const build: VSCodeBuild = preferences.build;
 
 const DB_PATH = `${homedir()}/Library/Application Support/${build}/User/globalStorage/state.vscdb`;
-const LEGACY_STORAGE_PATH = `${homedir()}/Library/Application Support/${build}/storage.json`;
 
 async function loadDB() {
   const fileBuffer = await readFile(DB_PATH);
-  const SQL = await initSqlJs({
-    locateFile: () => path.join(environment.assetsPath, "sql-wasm.wasm"),
-  });
-
+  const wasmBinary = await readFile(path.join(environment.assetsPath, "sql-wasm.wasm"));
+  const SQL = await initSqlJs({ wasmBinary });
   return new SQL.Database(fileBuffer);
 }
 
@@ -25,15 +22,9 @@ type QueryResult = {
 }[];
 
 export async function getRecentEntries(): Promise<EntryLike[]> {
-  // VS Code version < 1.64.0
-  const json = JSON.parse(await readFile(LEGACY_STORAGE_PATH, "utf8"));
-  if (json.openedPathsList) {
-    return json.openedPathsList.entries;
-  }
-
   const db = await loadDB();
   const res = db.exec(
-    "SELECT value FROM ItemTable WHERE key = 'history.recentlyOpenedPathsList'",
+    "SELECT value FROM ItemTable WHERE key = 'history.recentlyOpenedPathsList'"
   ) as unknown as QueryResult;
 
   // Filtering is handled by Raycast, so the DB can be closed immediately

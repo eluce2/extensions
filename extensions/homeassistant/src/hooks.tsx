@@ -10,7 +10,7 @@ export function useHAStates(): {
 } {
   const [states, setStates] = useState<State[]>();
   const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const hawsRef = useRef<Connection>();
 
   useEffect(() => {
@@ -50,6 +50,7 @@ export function useHAStates(): {
         if (!didUnmount) {
           const err = e instanceof Error ? e : new Error(e);
           setError(err);
+          setIsLoading(false);
         }
       }
     }
