@@ -1,27 +1,31 @@
 import { LocalStorage } from "@raycast/api";
-import { useEffect, useState } from "react";
-import { useList } from "react-use";
+import { useCachedPromise } from "@raycast/utils";
 
 export function useFavorites() {
-  const [favs, actions] = useList<Favorite>([]);
-  const [isLoading, setLoading] = useState(true);
+  const { data: favs, isLoading, revalidate } = useCachedPromise(getFavorites, [], { initialData: [] });
 
-  async function init() {
-    const myFavs = await LocalStorage.getItem("favorites");
-    if (myFavs) {
-      actions.set(JSON.parse(myFavs.toString()));
+  async function addOrUpdate(fav: Favorite) {
+    const index = favs.findIndex((f) => f.id === fav?.id);
+    const newFavs = [...favs];
+    if (index) {
+      newFavs[index] = fav;
     } else {
-      await LocalStorage.setItem("favorites", "[]");
+      newFavs.push(fav);
     }
+    LocalStorage.setItem("favorites", JSON.stringify(newFavs));
+    revalidate();
+  }
+  async function remove(index: number) {
+    const newFavs = [...favs];
+    newFavs.splice(index, 1);
+    LocalStorage.setItem("favorites", JSON.stringify(newFavs));
+    revalidate();
   }
 
-  useEffect(() => {
-    init().then(() => setLoading(false));
-  }, []);
+  return { favorites: favs, isLoading, addOrUpdate, remove };
+}
 
-  useEffect(() => {
-    LocalStorage.setItem("favorites", JSON.stringify(favs));
-  }, [favs]);
-
-  return { favorites: favs, isLoading, actions };
+function getFavorites(): Promise<Favorite[]> {
+  const myFavs = LocalStorage.getItem("favorites");
+  return myFavs ? JSON.parse(myFavs.toString()) : [];
 }
