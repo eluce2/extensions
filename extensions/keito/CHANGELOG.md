@@ -1,6 +1,6 @@
 # Keito Changelog
 
-## [Initial Version] - {PR_MERGE_DATE}
+## [Initial Version] - 2026-11-01
 
 - Sign in with your Keito account (OAuth), or use a full-access integration key
 - Keito Connection: setup checks, account and workspace settings, sign in and out
